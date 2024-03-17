@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+      image: postgres:13.3
+      container_name: db
+      restart: always
+      environment:
+        POSTGRES_DATABASE: postgres
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+      volumes:
+        - .dbdata:/var/lib/postgres
+      ports:
+        - "32768:5432"
+  web:
+    build: .
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && nohup python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/splitwise
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=django-insecure-#tkfhp6xin^#auru@93m6)rhq@al(wj5$yj=vhxs+jo@b3i*b%
+      - SERVER=True
+      - NAME=postgres
+      - USER=postgres
+      - PASSWORD=postgres
+      - HOST=db
+      - PORT=5432
+      - ADMIN_SITE_HEADER=SplitWise
+      - EMAIL_HOST_USER_NAME=ultraxpert01@gmail.com
+      - EMAIL_PASSWORD=zgrrkxjffoceaqgi
+    depends_on:
+      - db
